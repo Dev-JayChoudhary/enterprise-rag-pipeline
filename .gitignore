@@ -76,7 +76,9 @@ docs/_build/
 target/
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints/
+*egg-info/
+
 
 # IPython
 profile_default/
@@ -149,6 +151,8 @@ activemq-data/
 
 # Environments
 .env
+__pycache__/
+*.pyc
 .envrc
 .venv
 env/
