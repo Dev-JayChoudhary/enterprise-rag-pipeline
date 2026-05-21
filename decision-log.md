@@ -20,3 +20,23 @@ regardless of document size.
 
 ### Biggest mistake today:
 First cache decorator was case sensitive -"RAG" and "rag" were treated as different queries. Fixed with .lower().strip() normalization before cache lookup.
+
+## Day02 - OOP
+
+### Why a Document class instead of plain dicts?
+Dicts have no validation — anyone can pass empty text
+or missing keys and the bug appears 10 functions later.
+Document class validates at creation time, fails fast,
+and provides methods that travel with the data.
+
+### Why hashlib for document IDs?
+Same text from same source always generates the same ID.
+This means duplicate detection is automatic — if two 
+pipeline runs process the same PDF, the second run 
+skips already-processed documents without extra logic.
+
+### Why PDFDocument inherits from Document?
+DocumentCollection accepts Document objects.
+Since PDFDocument IS a Document (isinstance check),
+the collection works for both types without any changes.
+One collection class handles all document types.
