@@ -40,3 +40,27 @@ DocumentCollection accepts Document objects.
 Since PDFDocument IS a Document (isinstance check),
 the collection works for both types without any changes.
 One collection class handles all document types.
+
+## Day 03 - NumPy
+
+### Why cosine similarity over euclidean distance?
+Cosine similarity measures the angle between vectors,
+not the distance. Two documents can have different 
+lengths but similiar meaning - cosine similarity handles 
+this correctly, euclidean distance does nto.
+A short chunk and a long chunk about RAG will score
+high similarity. Euclidean distance would peanlize
+the length differnce unfairly.
+
+### Why normalize before dot product?
+Normalized vectors (magnitude =1.0) make cosine 
+similarity equal to a simple dot product.
+np.dot(a,b) on normalized vectors = cosine similarity.
+ChromaDB does this internally
+
+### Why threshold filtering?
+Returning low-confidence chunks to the LLM adds noise.
+A chunk with score 0.06 is barely related to the query.
+Giving the LLM noisy context causes hallucinations.
+Threshold = 0.1 to 0.3 is a reasonabel starting point
+depending on the domain.
