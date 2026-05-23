@@ -64,3 +64,20 @@ A chunk with score 0.06 is barely related to the query.
 Giving the LLM noisy context causes hallucinations.
 Threshold = 0.1 to 0.3 is a reasonabel starting point
 depending on the domain.
+
+## Day 04 -pandas
+
+### Why Pandas for metadata management?
+Every document in thr pipeline has metadata - source,
+status, score, quality. Pandas lets ud filter, group,
+and analyze this data in one line instead of writing
+loops. In production this wraps a PostgreSQL table - 
+same operations, jsut SQL under hood.
+
+### Bug caught today:
+Called update_status() instead of update_score() when
+scoring documents. Scores went into the status column - 
+silent bug, no error thrown. Fix: always verify metehod 
+names when pipeline has similar-sounding methods.
+Always add print statements inside methods during
+development to confirm which method is actually running.
