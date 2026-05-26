@@ -81,3 +81,23 @@ silent bug, no error thrown. Fix: always verify metehod
 names when pipeline has similar-sounding methods.
 Always add print statements inside methods during
 development to confirm which method is actually running.
+
+## Day 05 - Matplotlib & EDA
+
+### What the dashboard revealed:
+- All sources score below 0.7 threshold on average
+- This means chunking strategy needs improvement
+- Smaller chunks may produce higher similarity scores
+- vector_db.pdf scores lowest(0.48) - needs investigation
+
+### Why rolling average on time series?
+Daily scores fluctuate heavily due to document variety.
+A 7-day rolling average reveals the actual trend -
+are scores improving or degrading over time?
+Without rolling average you'd react to noise
+instead of real signal.
+
+### Why save plots as PNG?
+Pipelinr dashboard needs to be shareable.
+In production these plots auto-generate daily
+and get emailed to the team or posted to slack.
