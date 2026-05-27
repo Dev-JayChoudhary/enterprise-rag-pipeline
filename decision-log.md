@@ -1,3 +1,39 @@
+# Enterprise RAG Pipeline - Decision Log
+
+## Week 1 Summary - What I built and Why
+
+### Project elevator pitch (30 seconds)
+I'm building an Enterprise RAG Pipeline for companies
+that need to query internal sensitive documents without 
+sending data to external APIs. It uses hybrid BM25 +
+vector search, cross-encoder re-ranking and RAGAs
+evaluation. Unlike basic RAG projects, mine can measure
+its own accuracy and explain every architectural decision.
+
+### Core technical decisions made this week:
+
+| Decisions               | What i chose | Why 
+|                         |              |   
+| Loop vs Generator       | Generator    | 42, 000x memory efficient for PDF chunks
+| Random ID vs hashlib    | hashlib      | Same content = same ID = automatic deduplication
+| List vs DataFrame       | DataFrame    | GroupBy, filter, analyze pipeline health in on line
+| SGD vs Adam             | Adam         | Adapts learning rate per parameter, faster convergence
+| CPU vs GPU              | GPU          | CUDA 12.1, needed for LoRA fine-tuning in Week 6
+| Basic RAG vs Enterprise | Enterprise   | Hybrid search, re-ranking, eval, multi-tenancy
+
+
+### Biggest bugs caught this week:
+1. Cache decorator - case sensitive matching
+   Fix: normalize with .lower().strip() before lookup
+
+2. Called update_status() instead of update_score()
+   Fix: added [SCORED] print inside method to confirm
+   which method actually runs during development
+
+3. Gradient accumulation - forget zero_grad()
+   Fix: always zero_grad() before backward() in training loop
+
+
 ## Day 01 — Python Patterns
 
 ### Why generators over lists for PDF processing?
@@ -101,3 +137,32 @@ instead of real signal.
 Pipelinr dashboard needs to be shareable.
 In production these plots auto-generate daily
 and get emailed to the team or posted to slack.
+
+## Day 06 - PyTorch
+
+### Why GPU for traning?
+RTX 3050 6GB via CUDA 12.1
+Even for small networks GPU parallelism helps.
+for Week 6 LoRA fine-tuning on a 7B model,
+6GB VRAM is enough for 4-bit quantization.
+Without GPU that would be impossible on a laptop.
+
+### Why Adam over plain SGD?
+Adam adpts the learning rate per perimeter.
+SGD uses the same learning rate for almost everything.
+Adam converges faster and is more stable -
+it's the default optimizer for almost all
+modern deep learning tasks.
+
+### Why Zero_grad() before backward()?
+PyTorch accumulates gradients by default.
+Without zeroing, gradients from previous
+batches add to current batch gradientds - 
+weights update incorrectly and training breaks.
+This is one of the most common PyTorch bugs.
+
+### Why model.eval() before inference?
+Disables dropout and batchnorm training behaviour.
+Without it, inference gives defferent results
+everytime due to random dropout. Always set
+eval() before serving predictions in production
