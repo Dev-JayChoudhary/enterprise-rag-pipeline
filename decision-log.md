@@ -166,3 +166,82 @@ Disables dropout and batchnorm training behaviour.
 Without it, inference gives defferent results
 everytime due to random dropout. Always set
 eval() before serving predictions in production
+
+## Day 08 - HuggingFace
+
+### Why all-MiniLM_L6-v2 for embeddings?
+384 dimensions - small and fast, good for development,
+In production we'll upgrade to text-embedding-ada-002
+(OpenAI, 1536 dims) or bge-large-en (HuggingFace, 1024 dims)
+for better accuracy . MiniLM is perfect for learning 
+because ir downloads fast and runs fast on cpu if needed.
+
+## Why sentence-transformer over raw BERT?
+Raw Bert outputs one vector per token - You'd need to 
+pool them manually. sentence-transformers handles this
+automatically and is optimized significally for semantic
+similarity tasks. It's the industry standard for RAG
+embedding generation
+
+## Real vs random embeddings - the difference:
+Day 3 with random embeddings: Python ranked above RAG chunks
+Day 8 with real embeddings: Pyhthon correctly ranked last
+This proves embeddings encode actual meaning, not just numbers.
+Semantic search only works because of this.
+
+### What attention mast does:
+Padding tokens are added to make batches same length.
+Without attention mask, model would waste compution
+on padding zeros and produce wrong results.
+Mask = 1 means real token, 0 means ignore this position.
+
+## Day 09 - Fine-tuning BERT
+
+### Why fine-tuned instead of training from scratch?
+BERT already learned language from 3.3 billion words.
+Fine-tuning adds one new skill on top in minutes.
+Training from scratch could need weeks and massive compute.
+Transfer learning is why modern NLP is accessible.
+
+### Wht 2000 samples not 25000?
+Full dataset would take 30+ minutes on laptop GPU.
+2000 samples gave 83.4% accuracy in 1 minute.
+For production you'd use full dataset.
+During learning, speed of iteration matters more.
+
+### Hallucination sentence misclassified as POSITIVE:
+"The model hallucinates facts" -> classified POSITIVE
+Root cause: model trained on movie reviews, not ML feedback.
+Fix: fine-tune on domain-specific RAG feedback data.
+This is why domain-specific fine-tuning exists -
+general models fall on specialized vocabulary.
+
+### Why push to HuggingFace Hub?
+Public models are resume artifacts.
+Anyone can run your model with 3 lines of code.
+Shows you can ship ML artifacts, not just train locally.
+Interviewers can verify your work instantly.
+
+## Day 10 - LLM + Prompt Engineering?
+Free, no credit card, same API structure.
+Llama 3.1 8b fast and capable enough learning.
+Switch to OpenAI GPT-4o with one line change in production
+GROQ's speed (500+ tokens/sec) also helps during development
+when you are ieterating on prompts quickly.
+
+## Why temprature=0.1 for RAG?
+Higher temprature = more creative = more hallucination risk.
+RAG needs factual, consistent answers not creative ones.
+0.1 keeps responses grounded in retrieval context.
+Use highrt temprature only for creative writing tasks.
+
+## Why pass conversation history explicitly?
+LLMs are statelesss - they remember nothing between calls.
+Every multi-turn conversation must include full history.
+This means token costs grow with conversation length.
+Production system implement history truncation to control costs.
+
+## Groq BadRequest Error fix:
+Groq rejects messages with 'context' as key - must use 'context.
+Also rejects system prompts with certain structural keywords.
+Always print raw messages before sending when debugging API errors.

@@ -220,3 +220,21 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ignore specific model output folders
+notebooks/bert-sentiment-final/
+
+# Ignore heavy ML file extensions universally
+*.safetensors
+*.bin
+
+# Ban model folders anywhere in the project
+**/bert-sentiment*/
+**/checkpoint-*/
+
+# Ban all heavy ML extensions
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.h5
