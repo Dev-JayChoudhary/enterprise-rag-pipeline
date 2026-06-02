@@ -258,3 +258,24 @@ half contains the query keywords.
 Small chunks (200 chars) -> Precise retrieval, less context per chunk
 Large chunks (500 chars) -> more context, but retrieval less precise
 Production sweet spot: 300-512 chars with 10-15% overlap
+
+
+## Day 11 - LangChain
+
+### Why LangChain over manual implementation?
+Manual RAG from Day 10 required 80+ lines for one query.
+LangChain RAG chain does the same in 15 lines with the | operator.
+More importantly LangChain handles edge cases - empty retrievals,
+document formatting, chain of operations - that manual code misses.
+
+### LangChain Breaking change caught:
+langchain.schema moved to langchain_core.messages in newer versions.
+Fix: always check langchain changlog when imports fail.
+LangChain updates frequently - pin version in production.
+
+### Why RunnablePassthrough()?
+In a RAG chain the question to go to TWO places:
+1. The Retriever (to find relevant chunks)
+2. The prompt (as the question to answer)
+RunnablePassthrough() passes the input through unchanged
+to the pompt while the retriever processes it seperately
