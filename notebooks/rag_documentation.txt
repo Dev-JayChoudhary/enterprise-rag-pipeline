@@ -1,0 +1,34 @@
+# Enterprise RAG Pipeline Documentation
+
+## Overview
+Enterprise RAG (Retrieval Augmented Generation) is a system that combines 
+document retrieval with language model generation. Unlike basic RAG systems,
+enterprise versions include hybrid search, re-ranking, and evaluation.
+
+## Hybrid Search
+Hybrid search combines two retrieval methods:
+1. BM25 keyword search - finds exact keyword matches
+2. Vector semantic search - finds semantically similar content
+Results are merged using Reciprocal Rank Fusion (RRF).
+
+## Re-ranking
+After hybrid retrieval, a cross-encoder model re-scores the top chunks.
+Cross-encoders process query and document together for higher precision.
+This step significantly improves retrieval accuracy.
+
+## Evaluation with RAGAs
+RAGAs framework measures pipeline quality using four metrics:
+- Faithfulness: is the answer grounded in retrieved context?
+- Answer Relevancy: does the answer address the question?
+- Context Recall: were all relevant chunks retrieved?
+- Context Precision: were irrelevant chunks filtered out?
+
+## Multi-tenancy
+Each organization gets an isolated ChromaDB namespace.
+User authentication via JWT tokens controls document access.
+Company A cannot access Company B's documents.
+
+## Deployment
+The pipeline runs on FastAPI with Docker containerization.
+Deployed on AWS EC2 with Nginx as reverse proxy.
+GitHub Actions handles CI/CD automation.

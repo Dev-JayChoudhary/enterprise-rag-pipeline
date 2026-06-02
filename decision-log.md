@@ -245,3 +245,16 @@ Production system implement history truncation to control costs.
 Groq rejects messages with 'context' as key - must use 'context.
 Also rejects system prompts with certain structural keywords.
 Always print raw messages before sending when debugging API errors.
+
+### Why RecursiveCharacterTextSplitter over fixed splitting?
+Fixed splitting cuts at character count regardless of sentence
+boundaries - a chunk can start mid-sentence losing all context.
+Recursive splitter tries paragraph breaks first, then sentences,
+then word - always cuts at natural language boundaries.
+Overlap ensures a sentence split across two chunk regardless of which 
+half contains the query keywords.
+
+### Chunking size tradeoff:
+Small chunks (200 chars) -> Precise retrieval, less context per chunk
+Large chunks (500 chars) -> more context, but retrieval less precise
+Production sweet spot: 300-512 chars with 10-15% overlap
