@@ -279,3 +279,22 @@ In a RAG chain the question to go to TWO places:
 2. The prompt (as the question to answer)
 RunnablePassthrough() passes the input through unchanged
 to the pompt while the retriever processes it seperately
+
+
+## Day 12 - ChromaDB 
+
+### Why collection-level isolation over filter-based isolation?
+Two approaches to multi-tenancy:
+1. One collection, filter by org_id on every query
+2. Seperate collection per org
+
+We Chose seperate collection because:
+- Filter-based: one bug in filter code = data leak between orgs
+- collection-based: physically impossible to cross org boundaries
+- Security through architecture, not application logic
+- ChromaDB performance is better on smaller focused collections
+
+### Duplicate prevention:
+Auto-generated UUIDs caused duplicate documents on re-run.
+Fix: use content-based IDs(hashlib of text + source) like Day 2.
+Same content = same ID = automatic duduplication on add
