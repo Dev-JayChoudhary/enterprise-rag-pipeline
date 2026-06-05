@@ -298,3 +298,27 @@ We Chose seperate collection because:
 Auto-generated UUIDs caused duplicate documents on re-run.
 Fix: use content-based IDs(hashlib of text + source) like Day 2.
 Same content = same ID = automatic duduplication on add
+
+
+## Day 13 - Hybrid Search 
+
+### Why hybrid search over pure vector search?
+Demonstrated with RAG-2024-ENTERPRISE product code:
+Vector search gave NEGATIVE scores for exact product code docs.
+BM25 ranked them 1st and 2nd with scores 2.37 and 1.13.
+Hybrid correctly ranked both product docs in top 2.
+Pure vector search would have failed this query completely.
+
+### Why RRF over score normalization?
+Raw scores are incomparable - BM25 scores 0-10,
+vector similarity -1 to1. You cannot average them.
+RRF uses rank position only - rank 1 always gets
+1/(60+1) regardless of raw score.
+This makes merging mathematically sound.
+
+### RRF k=60 - why the value?
+k=60 is the standard from the original RRF paper.
+Higher k = rank differences matter less (smoother)
+Lower k = top ranks dominate more aggressively
+k=60 gives balanced fusion in practice
+
