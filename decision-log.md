@@ -322,3 +322,15 @@ Higher k = rank differences matter less (smoother)
 Lower k = top ranks dominate more aggressively
 k=60 gives balanced fusion in practice
 
+## Day 14 - Rag pipeline
+
+
+### Two issues:
+Issue 1 — Tokens showing decimals:
+Tokens: 0.107166745  ← should be integer like 107
+The total_tokens field is returning a float. Fix in RAGResponse.display():
+pythonprint(f"Tokens: {int(self.total_tokens)}")
+Issue 2 — Memory not working for Q3:
+Q3 "which of those metrics is most important" should reference Q2's RAGAs answer. The conversation history is being stored but the follow-up question has no context chunks about "most important metric" — so the LLM correctly says it can't find it in the documents.
+This is actually correct behavior — the system prompt says answer ONLY from chunks. The memory works but the retrieved chunks for Q3 didn't contain relevance ranking information.
+
