@@ -322,15 +322,35 @@ Higher k = rank differences matter less (smoother)
 Lower k = top ranks dominate more aggressively
 k=60 gives balanced fusion in practice
 
-## Day 14 - Rag pipeline
 
+## Day 14 — Complete RAG Pipeline
 
-### Two issues:
-Issue 1 — Tokens showing decimals:
-Tokens: 0.107166745  ← should be integer like 107
-The total_tokens field is returning a float. Fix in RAGResponse.display():
-pythonprint(f"Tokens: {int(self.total_tokens)}")
-Issue 2 — Memory not working for Q3:
-Q3 "which of those metrics is most important" should reference Q2's RAGAs answer. The conversation history is being stored but the follow-up question has no context chunks about "most important metric" — so the LLM correctly says it can't find it in the documents.
-This is actually correct behavior — the system prompt says answer ONLY from chunks. The memory works but the retrieved chunks for Q3 didn't contain relevance ranking information.
+### Pipeline performance baseline:
+Avg latency: 242ms — acceptable for production
+Max latency: 318ms — consistent, no spikes
+Avg tokens: 203 per query — cost efficient
+All answers cited sources correctly
 
+### Why memory limited to 6 messages (3 turns)?
+Token costs grow linearly with history length.
+6 messages = ~600 extra tokens per query.
+Beyond 3 turns, early context rarely helps.
+Production systems use summarization to compress
+old history instead of dropping it entirely.
+
+### Q3 follow-up "which metric is most important"
+returned "I cannot find this" — correct behavior.
+The system prompt says answer ONLY from chunks.
+Retrieved chunks had no relevance ranking info.
+This is NOT a memory bug — it's correct grounding.
+Fix: add a "metric importance" document to knowledge base.
+Lesson: RAG quality depends on knowledge base completeness.
+
+### Milestone 1 complete:
+Working end-to-end pipeline with:
+- Hybrid search (BM25 + vector + RRF)
+- Multi-tenant ChromaDB isolation
+- LLM generation with citations
+- Hallucination prevention
+- Conversation memory
+- Performance tracking
