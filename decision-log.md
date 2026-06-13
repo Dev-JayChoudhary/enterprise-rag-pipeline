@@ -354,3 +354,32 @@ Working end-to-end pipeline with:
 - Hallucination prevention
 - Conversation memory
 - Performance tracking
+
+## Day 15 - Cross-Encoder Re-ranking
+
+### Why retrieve 6 but rerank 3?
+Retrieval is fast - bi-encoder + BM25 can handle 100 candidates.
+Re-ranking is slow - cross-encoder reads each pair fully.
+Two-stage pattern: cast wide net (6), then precision filter  (3).
+In production: retrieve 20, rerank to 5.
+
+### Rerank score as quality signal:
+Score > 0 -> document is relevant to query
+Score -3 to 0 -> marginally relevant
+Score < -9 -> not relevant at all
+Pricing query scored -11.3 -> correctly identified as irrelevant
+RAGAs query scores 8.88 -> high confidence match
+
+### Prompt tuning lesson:
+"Answer ONLY from chunks" caused LLM to refuse
+when chunk had relevant info but didn't use exact query words.
+Fix: allow reasoning to connect related information.
+Balance needed - strict enough to prevent hallucination,
+flexible enough to use available context intelligently.
+
+### Why cross-encoder is slower than bi-encoder:
+Bi-encoder: Encode query once, encode docs once, compare vectors,
+Cross-encoder: must process every query-doc together.
+For 1000 docs: bi-encoder = 1001 forward passes,
+cross-encoder = 1000 forward passes (no caching possible).
+That's why cross-encoder is only used for re-ranking top candidates.
