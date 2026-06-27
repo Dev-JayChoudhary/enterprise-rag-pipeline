@@ -383,3 +383,63 @@ Cross-encoder: must process every query-doc together.
 For 1000 docs: bi-encoder = 1001 forward passes,
 cross-encoder = 1000 forward passes (no caching possible).
 That's why cross-encoder is only used for re-ranking top candidates.
+
+## Day 16 - RAGAs Evaluation
+
+### Baseline Pipeline scores:
+Faithfullness: 1.00 <- Zero hallucination
+Answer Relevancy: 0.59 <- needs improvement
+Context Precision: 0.61 <- reranking helping but enough
+Context Recall: 0.72 <- retrieval coverage acceptable
+Overall: 0.73 <- production acceptable threshold
+
+### Why faithfulness is the most important metric:
+Faithfulness = 1.0 means the pipeline never made up information.
+A hallucinating RAG system is worse than no system at all -
+it gives users confident wrong answers.
+Our system correctly refuses to answer unknown questions
+which is why faithfullness stayed at 1.0.
+
+### Why answer relevancy is low (0.59):
+"I cannnot find this information" answers score very low
+on relevancy because the generated reverse-questions
+are nothing like this original question.
+This is expected behaviour - not a real problem.
+Filtering out "cannot find" answers before scoring
+would give a more accurate relevancy picture.
+
+### Why we implemented metrics manually vs RAGAs library:
+RAGAs library had dependency conflicts with langchain version.
+Manual implementation forced deeper understanding of how
+each metric works - better interview answer than
+"I just called ragas.evaluate()"
+
+
+## Phase 2 + 3 Summary (Days 8-16)
+
+### What I built:
+- HuggingFace pipelines — sentiment, NER, QA, zero-shot
+- Fine-tuned BERT — 83.4% accuracy, pushed to HuggingFace Hub
+- LangChain RAG chain — 15 lines replacing 80 lines of manual code
+- ChromaDB MultiTenantVectorStore — collection-level isolation
+- HybridSearchRetriever — BM25 + vector + RRF
+- EnterpriseRAGPipeline — complete end-to-end system
+- CrossEncoder re-ranking — retrieve 6, rerank to 3
+- RAGEvaluator — 4 metrics, baseline scores established
+
+### Key metrics established:
+Faithfulness:      1.00 ← zero hallucinations
+Answer Relevancy:  0.59 ← low due to "cannot find" answers
+Context Precision: 0.61 ← reranking improving this
+Context Recall:    0.72 ← retrieval coverage good
+Overall:           0.73 ← production acceptable
+
+### Key decisions made:
+| Decision | Choice | Why |
+|----------|--------|-----|
+| Bi-encoder for retrieval | all-MiniLM-L6-v2 | Fast, 384 dims, good for dev |
+| Cross-encoder for reranking | ms-marco-MiniLM-L-6-v2 | Reads query+doc together |
+| Retrieve 6 rerank to 3 | Two-stage | Speed + precision balance |
+| Collection isolation | Per-org collections | Security through architecture |
+| RAGAs manual implementation | Custom code | Library had dependency conflicts |
+| Groq over OpenAI | Free, same API | Cost-free development |
