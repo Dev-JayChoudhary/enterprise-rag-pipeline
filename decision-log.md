@@ -443,3 +443,26 @@ Overall:           0.73 ← production acceptable
 | Collection isolation | Per-org collections | Security through architecture |
 | RAGAs manual implementation | Custom code | Library had dependency conflicts |
 | Groq over OpenAI | Free, same API | Cost-free development |
+
+## Day 18 — FastAPI Backend
+
+### Why FastAPI over Flask?
+FastAPI is async by default — handles concurrent requests efficiently.
+Automatic OpenAPI docs (Swagger UI) — zero extra work.
+Pydantic validation — request errors caught before hitting pipeline.
+Type hints throughout — cleaner, more maintainable code.
+Flask is synchronous — would block on every LLM call.
+
+### Why CORS middleware?
+React frontend runs on localhost:3000.
+FastAPI runs on localhost:8000.
+Browser blocks cross-origin requests by default.
+CORS middleware tells browser these origins are trusted.
+In production restrict allow_origins to your actual domain.
+
+### API design decisions:
+Per-org isolation maintained through org_id in every request.
+Conversation memory stored server-side per org_id.
+Stateless requests with stateful memory — best of both worlds.
+Swagger UI gives free interactive documentation — 
+anyone can test the API without writing code.
