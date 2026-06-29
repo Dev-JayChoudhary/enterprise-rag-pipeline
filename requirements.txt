@@ -1,0 +1,13 @@
+fastapi==0.138.1
+uvicorn==0.34.3
+python-jose[cryptography]==3.3.0
+passlib==1.7.4
+bcrypt==4.0.1
+python-multipart==0.0.20
+pydantic==2.11.5
+groq==0.24.0
+sentence-transformers==4.1.0
+rank-bm25==0.2.2
+chromadb==1.5.9
+python-dotenv==1.1.0
+torch==2.12.0

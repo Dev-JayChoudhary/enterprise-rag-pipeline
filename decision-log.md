@@ -466,3 +466,30 @@ Conversation memory stored server-side per org_id.
 Stateless requests with stateful memory — best of both worlds.
 Swagger UI gives free interactive documentation — 
 anyone can test the API without writing code.
+
+## Day 19 — JWT Authentication
+
+### Why JWT over sessions?
+Sessions require server-side storage — doesn't scale.
+JWT is stateless — token contains all user info.
+Any server instance can verify any token using SECRET_KEY.
+Essential for horizontal scaling and microservices.
+
+### Why org_id from token not request?
+If org_id came from request body:
+User could send org_id="competitor_corp" and access their data.
+With JWT: org_id is set at registration and embedded in token.
+User cannot change it without a new token from the server.
+Security through token — not through user honesty.
+
+### Why role-based access control?
+Different users need different permissions:
+Admin → can ingest documents (expensive, privileged operation)
+User  → can only query (read-only, safe operation)
+RBAC enforces this at the API layer — pipeline never sees
+unauthorized requests.
+
+### bcrypt version fix:
+passlib bcrypt error with newer bcrypt versions.
+Fix: pin bcrypt==4.0.1 for compatibility.
+Always pin security library versions in production. 
