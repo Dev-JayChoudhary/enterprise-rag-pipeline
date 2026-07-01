@@ -493,3 +493,35 @@ unauthorized requests.
 passlib bcrypt error with newer bcrypt versions.
 Fix: pin bcrypt==4.0.1 for compatibility.
 Always pin security library versions in production. 
+
+
+## Day 20 — Docker
+
+### Why Docker over running directly?
+"Works on my machine" is not a deployment strategy.
+Docker packages code + dependencies + runtime together.
+Same container runs identically on:
+- Your laptop
+- AWS EC2
+- Any teammate's machine
+No more "it worked yesterday" debugging.
+
+### Why slim base image?
+python:3.11-slim vs python:3.11
+Slim: ~150MB, full: ~900MB
+Smaller image = faster deployment, less attack surface.
+Only install what you need — gcc for native extensions.
+
+### Why pin dependency versions?
+Unpinned: pip install fastapi → gets latest version
+Latest version might break existing code silently.
+Pinned versions = reproducible builds every time.
+Critical for production — same image built 6 months later
+should behave identically.
+
+### Why persistent volumes?
+Without volumes: container restart = all ChromaDB data lost.
+Volume mounts ./api_db to /app/api_db inside container.
+Data lives on host machine, container just accesses it.
+Also mounted model cache — avoids re-downloading
+500MB+ of models on every container restart.
