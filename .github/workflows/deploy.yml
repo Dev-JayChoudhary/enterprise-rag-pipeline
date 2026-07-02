@@ -1,0 +1,37 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main ]
+  workflow_run:
+    workflows: ["Test API"]
+    types: [completed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/enterprise-rag-pipeline
+
+            echo "Pulling latest code..."
+            git pull origin main
+
+            echo "Rebuilding Docker container..."
+            docker-compose down
+            docker-compose up --build -d
+
+            echo "Checking health..."
+            sleep 10
+            curl -f http://localhost:8000/health && echo "Deployment successful!" || echo "Health check failed"
