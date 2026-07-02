@@ -1,0 +1,8 @@
+node_modules
+dist
+*.pem
+*.pth
+chroma_db
+api_db
+__pycache__
+*.pyc
