@@ -308,7 +308,7 @@ def get_me(current_user: TokenData = Depends(get_current_user)):
 # ── Protected Routes ─────────────────────────────
 @app.get("/health")
 def health():
-    return {"status": "healthy", "version": "2.0.0"}
+    return {"status": "healthy", "version": "2.1.0"}
 
 @app.post("/ingest", response_model=IngestResponse)
 def ingest(
