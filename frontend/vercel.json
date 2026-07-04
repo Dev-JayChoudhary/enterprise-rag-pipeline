@@ -3,6 +3,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "http://15.252.18.226:8000/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

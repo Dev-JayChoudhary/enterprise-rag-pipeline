@@ -238,3 +238,4 @@ notebooks/bert-sentiment-final/
 *.pt
 *.pth
 *.h5
+.vercel

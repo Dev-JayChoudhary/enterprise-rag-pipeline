@@ -525,3 +525,4 @@ Volume mounts ./api_db to /app/api_db inside container.
 Data lives on host machine, container just accesses it.
 Also mounted model cache — avoids re-downloading
 500MB+ of models on every container restart.
+
