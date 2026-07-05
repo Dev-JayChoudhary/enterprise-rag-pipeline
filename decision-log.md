@@ -526,3 +526,28 @@ Data lives on host machine, container just accesses it.
 Also mounted model cache — avoids re-downloading
 500MB+ of models on every container restart.
 
+## Day 23 — React Frontend
+
+### Why Vite over Create React App?
+Vite is 10-100x faster than CRA for development.
+Hot module replacement is near instant.
+CRA is deprecated — Vite is the current standard.
+
+### Why Vercel for frontend?
+Free, automatic HTTPS, global CDN.
+Deploys from git push automatically.
+Zero configuration for React/Vite apps.
+
+### Mixed content HTTPS fix:
+Vercel serves HTTPS, EC2 serves HTTP.
+Browsers block mixed content requests.
+Fix: Vercel rewrites proxy /api/* to EC2.
+Frontend calls /api/query → Vercel proxies to http://EC2:8000/query.
+All traffic stays HTTPS from browser perspective.
+Production fix would be SSL certificate on EC2 via Let's Encrypt.
+
+### Frontend architecture:
+api.js — single file for all API calls with axios interceptor
+JWT token stored in localStorage — auto-attached to every request
+Tab-based UI — Chat and Ingest/Stats separation
+Role-based UI — admin sees ingest, user sees stats only
